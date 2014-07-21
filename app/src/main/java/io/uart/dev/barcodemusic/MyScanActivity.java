@@ -4,6 +4,8 @@ package io.uart.dev.barcodemusic;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
@@ -107,7 +109,11 @@ public class MyScanActivity extends Activity implements ScanditSDKListener {
         }
 
         Toast.makeText(this, symbology + ": " + cleanBarcode, Toast.LENGTH_LONG).show();
+        String searchurl = "http://www.google.com/#q=";
+        String final_searchurl = searchurl + cleanBarcode;
 
+        Uri uri = Uri.parse(final_searchurl);
+        startActivity(new Intent(Intent.ACTION_VIEW, uri));
     }
 
     public void didManualSearch(String entry) {
