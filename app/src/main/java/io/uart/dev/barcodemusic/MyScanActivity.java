@@ -36,7 +36,7 @@ public class MyScanActivity extends Activity implements ScanditSDKListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_scan);
-        // we sart the barcode recognition
+        // we start the barcode recognition
         initializeAndStartBarcodeScanning();
     }
 
@@ -70,7 +70,9 @@ public class MyScanActivity extends Activity implements ScanditSDKListener {
         ScanditSDKAutoAdjustingBarcodePicker picker = new ScanditSDKAutoAdjustingBarcodePicker(
                 this, sScaditSdkAppKey, ScanditSDKAutoAdjustingBarcodePicker.CAMERA_FACING_BACK);
         // lets add both views
-        setContentView(picker);
+
+        picker.getOverlayView().addListener(this);
+
         mBarcodePicker = picker;
 
         // register listener in order to be notified about relevant evnets
@@ -79,6 +81,21 @@ public class MyScanActivity extends Activity implements ScanditSDKListener {
 
         // show a search bar in the scan UI
         mBarcodePicker.getOverlayView().showSearchBar(true);
+
+        setContentView(picker);
+    }
+
+    @Override
+    protected void onPause() {
+        // activity is in background we bring to front again
+        mBarcodePicker.stopScanning();
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        mBarcodePicker.startScanning();
+        super.onResume();
     }
 
     public void didScanBarcode(String barcode, String symbology) {
@@ -144,4 +161,5 @@ public class MyScanActivity extends Activity implements ScanditSDKListener {
 //        mHideHandler.removeCallbacks(mHideRunnable);
  //       mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
+
 }
