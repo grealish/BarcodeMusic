@@ -15,14 +15,6 @@ public class MyMenuActivity extends Activity {
         setContentView(R.layout.activity_my_menu);
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.my_menu, menu);
-        return true;
-    }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -36,9 +28,11 @@ public class MyMenuActivity extends Activity {
     }
 
     @Override
-    pubic boolean onCreateOptionMenu(Menu menu) {
+    public boolean onCreateOptionMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.my_menu, menu);
 
-        SearchManager searchManager = (SearchManager) getSystemService(Contex)
+        SearchManager searchManager = (SearchManager) getSystemService(Contex);
+
+        return true;
     }
 }
