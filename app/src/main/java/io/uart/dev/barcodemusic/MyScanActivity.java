@@ -1,6 +1,6 @@
 package io.uart.dev.barcodemusic;
 
-import io.uart.dev.barcodemusic.util.SystemUiHider;
+// import io.uart.dev.barcodemusic.util.SystemUiHider;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -26,8 +26,8 @@ public class MyScanActivity extends Activity implements ScanditSDKListener {
     private static final boolean AUTO_HIDE = true;
     private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
     private static final boolean TOGGLE_ON_CLICK = true;
-    private static final int HIDER_FLAGS = SystemUiHider.FLAG_HIDE_NAVIGATION;
-    private static SystemUiHider mSystemUiHider;
+//    private static final int HIDER_FLAGS = SystemUiHider.FLAG_HIDE_NAVIGATION;
+//    private SystemUiHider mSystemUiHider;
     private ScanditSDK mBarcodePicker;
 
     private static final String sScaditSdkAppKey = "01f2EAYFEeSXa2I8Q1x/drTyJQp9WxDJFaobe0dR9Ww";
@@ -128,11 +128,11 @@ public class MyScanActivity extends Activity implements ScanditSDKListener {
         }
     };
 
-    Handler mHideHandler = new Handler();
+    //Handler mHideHandler = new Handler();
     Runnable mHideRunnable = new Runnable() {
         @Override
         public void run() {
-            mSystemUiHider.hide();
+           // mSystemUiHider.hide();
         }
     };
 
@@ -141,7 +141,7 @@ public class MyScanActivity extends Activity implements ScanditSDKListener {
      * previously scheduled calls.
      */
     private void delayedHide(int delayMillis) {
-        mHideHandler.removeCallbacks(mHideRunnable);
-        mHideHandler.postDelayed(mHideRunnable, delayMillis);
+//        mHideHandler.removeCallbacks(mHideRunnable);
+ //       mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
 }

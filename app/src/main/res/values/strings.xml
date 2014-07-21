@@ -2,9 +2,11 @@
 <resources>
 
     <string name="app_name">BarcodeMusic</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="instructions">The following buttons help you to search for music online with a barcode</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_my_scan">MyScanActivity</string>
     <string name="action_search">Search</string>
+    <string name="title_activity_my_music">MyMusicActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

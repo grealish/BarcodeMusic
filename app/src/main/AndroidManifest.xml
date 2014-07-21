@@ -2,6 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.uart.dev.barcodemusic" >
 
+    <uses-permission android:name="android.permission.access_coarse_location"></uses-permission>
+
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
+    <uses-feature android:name="android.hardware.camera" />
+
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -15,14 +24,15 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-            <intent-filter >
+            <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
+
                 <category android:name="android.intent.catagory.DEFAULT" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
+
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
@@ -30,6 +40,10 @@
         <activity
             android:name=".MyScanActivity"
             android:label="@string/title_activity_my_scan" >
+        </activity>
+        <activity
+            android:name=".MyMusicActivity"
+            android:label="@string/title_activity_my_music" >
         </activity>
     </application>
 
