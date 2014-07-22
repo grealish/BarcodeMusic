@@ -1,31 +1,63 @@
 package io.uart.dev.barcodemusic;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import io.uart.dev.barcodemusic.R;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class MyMusicActivity extends Activity {
 
+    // We should get a barcode from the MyScanActivity
+    // test barcode
+    String cleanBarcode = "602517318465";
+    String oneablumname = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // set the view
         setContentView(R.layout.activity_my_music);
+
+
+        // TODO: implement an interface to receaive barcode and type
+        new WsRestRequest().execute();
+
 
         final ListView listview = (ListView) findViewById(R.id.listview);
         // TODO: replace example with query information from API
         // String of albums for example
+        /*
         String[] albums = new String[]{
                 "Coldplay - Clocks (Kungs Edit)",
                 "Coldplay X & Y Album",
@@ -51,7 +83,7 @@ public class MyMusicActivity extends Activity {
             albumlist.add(albums[i]);
         }
 
-        final StableArrayAdapter adapter = new StableArrayAdapter(this, android.R.layout.simple_list_item_1, albumlist);
+        final StableArrayAdapter adapter = new StableArrayAdapter(this, R.id.listview, albumlist);
         listview.setAdapter(adapter);
 
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -68,7 +100,7 @@ public class MyMusicActivity extends Activity {
                 });
             }
         });
-
+*/
     }
 
     @Override
@@ -111,5 +143,111 @@ public class MyMusicActivity extends Activity {
         public boolean hasStableIds() {
             return true;
         }
+    }
+
+    // TODO: clean this up, factor out API and URL's
+    public String getAlbumName(String cleanBarcode) {
+        // this is searching google with barcode
+
+
+        // end of all try/catch
+        return null;
+    }
+
+    // another method to handle when the result is returned from the Async HTTP call.
+
+    public void populateListView(String wsJsonResponce) {
+        // we now do the json stuff here and populate the text and list view
+        String albumjson = wsJsonResponce;
+
+        try {
+            JSONArray jsonArray = new JSONArray(albumjson);
+            Log.i(MyScanActivity.class.getName(), "number of albums " + jsonArray.length());
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                Log.i(MyScanActivity.class.getName(), jsonObject.getString("name"));
+                oneablumname = jsonObject.getString("name");
+                Log.i(MyScanActivity.class.getName(), oneablumname);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Toast.makeText(this, oneablumname, Toast.LENGTH_LONG).show();
+    }
+
+    private class WsRestRequest extends AsyncTask<String, Void, Void> {
+
+        // we init the request
+
+        String searchurl = "https://api.scandit.com/v2/products/";
+        String api_key = "sDhapl6kpvCL-a_9wDVAW2jUB9s98y98I8HEb8BJ0Tg";
+        String final_searchurl = searchurl + cleanBarcode + "?key=" + api_key;
+        String albumjson = "";
+        private String Error = null;
+
+        // we setup some ui stuff
+        TextView uiAlbumName = (TextView) findViewById(R.id.albumname);
+
+        //private ProgressDialog Dialog = new ProgressDialog(MyMusicActivity.this);
+        String data = "";
+
+
+        protected void onPreExecute() {
+            // ui elements can be called here
+            // we start progress bar
+        }
+        @Override
+        protected Void doInBackground(String... sUrl) {
+
+            StringBuilder builder = new StringBuilder();
+            HttpClient wsclient = new DefaultHttpClient();
+            HttpGet httpGet = new HttpGet(final_searchurl);
+
+            try {
+                // we attempt to get data
+                HttpResponse wsresponce = wsclient.execute(httpGet);
+                StatusLine statusLine = wsresponce.getStatusLine();
+                int statusCode = statusLine.getStatusCode();
+
+                if (statusCode == 200) {
+                    HttpEntity entity = wsresponce.getEntity();
+                    InputStream content = entity.getContent();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(content));
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        builder.append(line);
+                    }
+                    albumjson = builder.toString();
+                } else {
+                    Log.e(MyMusicActivity.class.toString(), "Failded to get Sandit API");
+                }
+            } catch (ClientProtocolException e) {
+                e.printStackTrace();
+                 } catch (IOException e) {
+                    e.printStackTrace();
+                    }
+            return null;
+        }
+
+        // after background taks we now update and pase JSON
+        protected void onPostExecute(Void unused) {
+            // we can call ui elements here to update Activitiy
+                // we need to parse out the JSON to get the album name returned from getAlbumName
+                try {
+                    JSONArray jsonArray = new JSONArray(albumjson);
+                    Log.i(MyScanActivity.class.getName(), "number of albums " + jsonArray.length());
+                    for (int i = 0; i < jsonArray.length(); i++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        Log.i(MyScanActivity.class.getName(), jsonObject.getString("name"));
+                        oneablumname = jsonObject.getString("name");
+                        Log.i(MyScanActivity.class.getName(), oneablumname);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                uiAlbumName.setText(oneablumname);
+         }
+
+
     }
 }

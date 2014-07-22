@@ -27,6 +27,7 @@
         android:textSize="12sp" />
 
     <TextView
+        android:id="@+id/albumname"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/secondLine"
@@ -40,8 +41,9 @@
 
     <ListView
         android:id="@+id/listview"
-        android:layout_alignBottom="@id/secondLine"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/secondLine"
+        android:layout_alignParentLeft="true" />
 
 </RelativeLayout>
