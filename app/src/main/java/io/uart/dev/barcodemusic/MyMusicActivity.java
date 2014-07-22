@@ -1,9 +1,12 @@
 package io.uart.dev.barcodemusic;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -23,7 +26,7 @@ public class MyMusicActivity extends Activity {
         final ListView listview = (ListView) findViewById(R.id.listview);
         // TODO: replace example with query information from API
         // String of albums for example
-        String[] albums = new String[] {
+        String[] albums = new String[]{
                 "Coldplay - Clocks (Kungs Edit)",
                 "Coldplay X & Y Album",
                 "Daft Punk - Random Access Memories (2013) [FLAC]",
@@ -48,9 +51,25 @@ public class MyMusicActivity extends Activity {
             albumlist.add(albums[i]);
         }
 
-        final StableArrayAdapter adapter = new StableArrayAdapter(this,)
-    }
+        final StableArrayAdapter adapter = new StableArrayAdapter(this, android.R.layout.simple_list_item_1, albumlist);
+        listview.setAdapter(adapter);
 
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
+                final String item = (String) parent.getItemAtPosition(position);
+                view.animate().setDuration(2000).alpha(0).withEndAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        albumlist.remove(item);
+                        adapter.notifyDataSetChanged();
+                        view.setAlpha(1);
+                    }
+                });
+            }
+        });
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -73,6 +92,24 @@ public class MyMusicActivity extends Activity {
 
     private class StableArrayAdapter extends ArrayAdapter<String> {
 
-        HashMap<String, Integer>
+        HashMap<String, Integer> mIdMap = new HashMap<String, Integer>();
+
+        public StableArrayAdapter(Context context, int textViewResourceId, List<String> objects) {
+            super(context, textViewResourceId, objects);
+            for (int i = 0; i < objects.size(); ++i) {
+                mIdMap.put(objects.get(i), i);
+            }
+        }
+
+        @Override
+        public long getItemId(int position) {
+            String item = getItem(position);
+            return mIdMap.get(item);
+        }
+
+        @Override
+        public boolean hasStableIds() {
+            return true;
+        }
     }
 }
