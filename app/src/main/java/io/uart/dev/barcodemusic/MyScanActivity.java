@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
@@ -21,6 +22,21 @@ import io.uart.dev.barcodemusic.R;
 import com.mirasense.scanditsdk.ScanditSDKAutoAdjustingBarcodePicker;
 import com.mirasense.scanditsdk.interfaces.ScanditSDK;
 import com.mirasense.scanditsdk.interfaces.ScanditSDKListener;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class MyScanActivity extends Activity implements ScanditSDKListener {
 
@@ -102,6 +118,7 @@ public class MyScanActivity extends Activity implements ScanditSDKListener {
 
     public void didScanBarcode(String barcode, String symbology) {
         String cleanBarcode = "";
+        String oneablumname = "";
         for (int i = 0; i < barcode.length(); i++) {
             if (barcode.charAt(i) > 30) {
                 cleanBarcode += barcode.charAt(i);
@@ -109,11 +126,26 @@ public class MyScanActivity extends Activity implements ScanditSDKListener {
         }
 
         Toast.makeText(this, symbology + ": " + cleanBarcode, Toast.LENGTH_LONG).show();
-        String searchurl = "http://www.google.com/#q=";
-        String final_searchurl = searchurl + cleanBarcode;
+        mBarcodePicker.startScanning();
+        finish();
 
-        Uri uri = Uri.parse(final_searchurl);
-        startActivity(new Intent(Intent.ACTION_VIEW, uri));
+
+
+        String albumname = getAlbumName(cleanBarcode);
+        // we need to parse out the JSON to get the album name returned from getAlbumName
+        try {
+            JSONArray jsonArray = new JSONArray(albumname);
+            Log.i(MyScanActivity.class.getName(), "number of albums " + jsonArray.length());
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                Log.i(MyScanActivity.class.getName(), jsonObject.getString("name"));
+                oneablumname = jsonObject.getString("name");
+                Log.i(MyScanActivity.class.getName(), oneablumname);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Toast.makeText(this, oneablumname, Toast.LENGTH_LONG).show();
     }
 
     public void didManualSearch(String entry) {
@@ -167,5 +199,42 @@ public class MyScanActivity extends Activity implements ScanditSDKListener {
 //        mHideHandler.removeCallbacks(mHideRunnable);
  //       mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
+
+    public String getAlbumName(String cleanBarcode) {
+
+        // this is searching google with barcode
+        String searchurl = "https://api.scandit.com/v2/products/";
+        String api_key = "sDhapl6kpvCL-a_9wDVAW2jUB9s98y98I8HEb8BJ0Tg";
+        String final_searchurl = searchurl + cleanBarcode + "?key=" + api_key;
+
+        Uri uri = Uri.parse(final_searchurl);
+        StringBuilder builder = new StringBuilder();
+        HttpClient wsclient = new DefaultHttpClient();
+        HttpGet httpGet = new HttpGet(final_searchurl);
+
+        try {
+            HttpResponse wsresponce = wsclient.execute(httpGet);
+            StatusLine statusLine = wsresponce.getStatusLine();
+            int statusCode = statusLine.getStatusCode();
+            if (statusCode == 200) {
+                HttpEntity entity = wsresponce.getEntity();
+                InputStream content = entity.getContent();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(content));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    builder.append(line);
+                }
+            } else {
+                Log.e(MyScanActivity.class.toString(), "Failed to get Scandit API");
+            }
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // end of all try/catch
+    return builder.toString();
+    }
+
 
 }
