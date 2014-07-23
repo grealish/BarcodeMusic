@@ -32,8 +32,9 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile fileTree(dir: 'src/main/lib', include: '**/*/so')
+    compile fileTree(dir: 'src/main/jniLibs', include: '**/*/so')
     // You must install or update the Support Repository through the SDK manager to use this dependency.
     compile 'com.android.support:support-v4:19.+'
     compile files('libs/scanditsdk-barcodepicker-android-4.1.0BETA4.jar')
 }
+
