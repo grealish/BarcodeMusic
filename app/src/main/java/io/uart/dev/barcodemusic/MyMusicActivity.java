@@ -38,10 +38,10 @@ import java.util.List;
 
 public class MyMusicActivity extends Activity {
 
-    // We should get a barcode from the MyScanActivity
-    // test barcode
-    String cleanBarcode = "602517318465";
+    // TODO: should refactor this in a better way
+    String cleanBarcode = "";
     String oneablumname = "";
+    String productcatagory = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,13 +49,16 @@ public class MyMusicActivity extends Activity {
         // set the view
         setContentView(R.layout.activity_my_music);
 
+        // content back from barcode scan
+        cleanBarcode = getIntent().getExtras().getString("barcode");
+        // TODO: get barcode type too
 
         // TODO: implement an interface to receaive barcode and type
         new WsRestRequest().execute();
 
 
         final ListView listview = (ListView) findViewById(R.id.listview);
-        // TODO: replace example with query information from API
+        // TODO: replace example with query information from Rovi Search API
         // String of albums for example
         /*
         String[] albums = new String[]{
@@ -234,16 +237,43 @@ public class MyMusicActivity extends Activity {
             // we can call ui elements here to update Activitiy
                 // we need to parse out the JSON to get the album name returned from getAlbumName
                 try {
+                    JSONObject productObj = new JSONObject(albumjson);
+
+                    oneablumname = productObj.getJSONObject("basic").getString("name");
+
+                    /* TODO: query ROVI API for album information and display it
+                    // e.g http://api.rovicorp.com/data/v1.1/album/info?apikey=apikey&sig=sig&album=double%20live
+                    TODO: get albumID and query for Image, maybe spawn in a different ASyncTask
+                    TODO: provide option to play sameple song.
+
+                    */
+
+                    if(productObj != null) {
+                        JSONArray albumlist = productObj.getJSONArray("basic");
+                        if(albumlist != null) {
+                            // we might get more then one album per barcode
+                            for (int i = 0; i < albumlist.length(); i++) {
+                                JSONObject elem = albumlist.getJSONObject(i);
+                                if(elem != null) {
+                                    oneablumname = elem.getString("name");
+                                    productcatagory = elem.getString("category");
+                                }
+                            }
+                        }
+                    }
+                    /*
                     JSONArray jsonArray = new JSONArray(albumjson);
-                    Log.i(MyScanActivity.class.getName(), "number of albums " + jsonArray.length());
+                    Log.i(MyMusicActivity.class.getName(), "number of albums " + jsonArray.length());
                     for (int i = 0; i < jsonArray.length(); i++) {
                         JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        Log.i(MyScanActivity.class.getName(), jsonObject.getString("name"));
+                        Log.i(MyMusicActivity.class.getName(), jsonObject.getString("name"));
                         oneablumname = jsonObject.getString("name");
-                        Log.i(MyScanActivity.class.getName(), oneablumname);
+                        Log.i(MyMusicActivity.class.getName(), oneablumname);
                     }
+                    */
                 } catch (Exception e) {
                     e.printStackTrace();
+                    uiAlbumName.setText(albumjson);
                 }
                 uiAlbumName.setText(oneablumname);
          }

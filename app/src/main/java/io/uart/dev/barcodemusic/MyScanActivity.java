@@ -125,6 +125,11 @@ public class MyScanActivity extends Activity implements ScanditSDKListener {
         }
 
         Toast.makeText(this, symbology + ": " + cleanBarcode, Toast.LENGTH_LONG).show();
+
+        Intent searchMusic = new Intent(MyScanActivity.this, MyMusicActivity.class);
+        // we pass the barcode to the new activitiy we will intent
+        searchMusic.putExtra("barcode", cleanBarcode);
+        MyScanActivity.this.startActivity(searchMusic);
     }
 
     public void didManualSearch(String entry) {
