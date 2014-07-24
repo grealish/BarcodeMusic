@@ -3,7 +3,7 @@
 This app an app that allows your to search for music by scanning the barcode of a real album and searching this music online. It makes use of the SanditSDK camera BarcodeScanner and a REST client to lookup the albums EAN-13 barcode number. Currently a Alpha build in continnous developpment, please see the feature roadmap below
 
 <p align="center">
-<img src"https://raw.githubusercontent.com/grealish/BarcodeMusic/master/raw/barcodemusic-scanactivity-v0.1.png" alt="Scanning Activity" />
+<img src="https://raw.githubusercontent.com/grealish/BarcodeMusic/master/raw/barcodemusic-scanactivity-v0.1.png" alt="Scanning Activity" />
 </p>
 
 ## Feature Roadmap
