@@ -1,8 +1,12 @@
-## BarcodeMusic App
+# BarcodeMusic App
 ======
 This app is a simple use of the SanditSDK camera BarcodeScanner and a REST client to lookup the albums EAN-13 barcode number and search a album cover to display
 
-# Feature Roadmap
+<p align="center">
+<img src"https://github.com/grealish/BarcodeMusic/raw/barcodemusic-scanactivity-v0.1.png?raw=true" alt="Scanning Activity" />
+</p>
+
+## Feature Roadmap
 
 * Scans Music Album CDs and DVD's that have a Barcode EAN-13
 * Uses Scandit Product API to lookup barcode details
@@ -14,16 +18,36 @@ This app is a simple use of the SanditSDK camera BarcodeScanner and a REST clien
 
 ## Development
 
+### Build
+
+Do the regular Git pull, check that gradle is working on your system already or if you have android studio it's possible to build in the UI
+
+````
+git clone git@github.com:grealish/BarcodeMusic.git
+cd BarcodeMusic/
+gradle clean build
+cd app/build/outputs/apk/ "you find the apk files here"
+````
+### Testing
+
+More to come, adding gradle test tools
+
 ### TODO:
 
 * Refactor AsyncTask
 * Add ActionBar Search
 * Add Barcode Settings
-* Consolidate Scans to EAN-13 and UP
+* Consolidate Scans to EAN-13 and UPC
+* Add unittests
 
 ## Referances
 
 * SDK http://scandit.com/
 * API http://scandit.com/
 * Music API http://developer.rovicorp.com/
+* Android Studio (IntelliJ)
+
+
 ## Contact
+
+* Grealish http://twitter.com/grealish
